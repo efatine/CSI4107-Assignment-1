@@ -1,5 +1,6 @@
 import json
 import preprocessing
+import indexing as idx
 
 # file paths
 stopwords_file = "stop_words.txt"
@@ -67,3 +68,14 @@ try:
 
 except FileNotFoundError:
     print("queries file not found. please check the path.")
+
+# building inverted index
+inverted_index = {}  #structure: {token: {doc_id: count, ...}, ...}
+try:
+    inverted_index = idx.build_inverted_index(documents) #processing structure
+    print(f"inverted index built with {len(inverted_index)} unique tokens.")
+    print("saving inverted index to file...")
+    with open("inverted_index.json", "w") as f:  #save the dict to a json file
+        json.dump(inverted_index, f, indent=2)
+except Exception as e:
+    print(f"error building inverted index: {e}")
