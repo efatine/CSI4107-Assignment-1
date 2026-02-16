@@ -1,6 +1,8 @@
 import json
 import preprocessing
 import indexing as idx
+import ranking
+import os
 
 # file paths
 stopwords_file = "stop_words.txt"
@@ -74,8 +76,46 @@ inverted_index = {}  #structure: {token: {doc_id: count, ...}, ...}
 try:
     inverted_index = idx.build_inverted_index(documents) #processing structure
     print(f"inverted index built with {len(inverted_index)} unique tokens.")
+    print(next(iter(inverted_index.items())))
+
     print("saving inverted index to file...")
     with open("inverted_index.json", "w") as f:  #save the dict to a json file
         json.dump(inverted_index, f, indent=2)
 except Exception as e:
     print(f"error building inverted index: {e}")
+    
+  # --- Step 3: Retrieval + Ranking ---
+print("converting inverted index format for ranking...")
+postings = {term: list(doc_map.items()) for term, doc_map in inverted_index.items()}
+
+print("computing df/idf + doc norms...")
+df = ranking.compute_df(postings)
+idf = ranking.compute_idf(df, len(documents))
+doc_norm = ranking.compute_doc_norms(postings, idf)
+
+# convert processed_queries list -> list[(qid_int, tokens)]
+queries = []
+for q in processed_queries:
+    try:
+        qid_int = int(q["id"])
+    except:
+        continue
+    # OPTIONAL: only odd query ids (test set requirement)
+    if qid_int % 2 == 0:
+        continue
+    queries.append((qid_int, q["tokens"]))
+
+queries.sort(key=lambda x: x[0])
+
+print("scoring and ranking...")
+rankings = {}
+for qid, q_tokens in queries:
+    scores = ranking.score_query_tfidf_cosine(q_tokens, postings, idf, doc_norm)
+    top = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:100]
+    rankings[qid] = top
+
+print("writing Results...")
+
+ranking.write_results("Results.txt", rankings, "tfidf_cosine_run")
+
+print("Done.")
