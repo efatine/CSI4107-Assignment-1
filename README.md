@@ -78,7 +78,7 @@ To rank the documents, we implemented the TF-IDF weights and Cosine Similarity f
 
 ### Data Structures
 
-- **Inverted Index:** We used a Python Dictionary (`{word: {doc_id: count}}`). Looking up words in a dictionary is really fast ($O(1)$), so it makes the search efficient
+- **Inverted Index:** We used a Python Dictionary (`{word: {doc_id: count}}`). Looking up words in a dictionary takes (O(1)) time, so it makes the search efficient
 - **Max Frequency Map:** We created a separate dictionary to store the highest word count for every document. We needed this to normalize the term frequency properly
 
 ### Algorithms
