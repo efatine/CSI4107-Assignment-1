@@ -25,7 +25,7 @@ def compute_doc_norms(postings, idf, doc_max_freqs):
         if term not in idf:
             continue
         
-        # check if plist is a dict or list to handle indexing format
+        # check if plist is a dict or list
         iterator = plist.items() if isinstance(plist, dict) else plist
 
         for doc_id, count in iterator:
@@ -92,7 +92,7 @@ def score_query_tfidf_cosine(query_tokens, postings, idf, doc_norm, doc_max_freq
 
     return scores
 
-# write results in required TREC format
+# write results in required format
 def write_results(path, rankings, run_name):
     directory = os.path.dirname(path)
     if directory:

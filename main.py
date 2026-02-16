@@ -47,7 +47,6 @@ def calculate_average_precision(retrieved_docs, relevant_docs_set):
             sum_precisions += (hits / i)
     return sum_precisions / len(relevant_docs_set)
 
-# --- main execution ---
 
 # 1. load stopwords
 print("loading stopwords...")
@@ -144,7 +143,7 @@ print(f"writing results to {output_file}...")
 ranking.write_results(output_file, all_rankings, run_name)
 
 # print first 10 for report
-print("\nFirst 10 answers (for report):")
+print("\nFirst 10 answers")
 print("--------------------------------------------------")
 with open(output_file, 'r') as f:
     for i, line in enumerate(f):
